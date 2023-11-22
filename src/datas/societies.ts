@@ -1,34 +1,35 @@
-import { SocietyInterface } from "../@types/interfaces/SocietyInterface";
+import { SocietyInterface } from "../@types/interfaces";
 
 export const societies: SocietyInterface[] = [
   {
     name: "winmysale",
+    votedUsers: 0,
     users: [
       {
         name: "Marvin",
         token: "winmysale*|*MARVIN_SOURDON",
-        socketId: "111",
+        socketId: "",
         points: 0,
         role: "ADMIN",
       },
       {
         name: "William",
         token: "winmysale*|*WILLIAM_LOREE",
-        socketId: "222",
+        socketId: "",
         points: 0,
         role: "ADMIN",
       },
       {
         name: "Enzo",
         token: "winmysale*|*ENZO_MARTINEZ",
-        socketId: "333",
+        socketId: "",
         points: 0,
         role: "USER",
       },
       {
         name: "Micka",
         token: "winmysale*|*MICKAEL_GONZALES",
-        socketId: "444",
+        socketId: "",
         points: 0,
         role: "USER",
       },

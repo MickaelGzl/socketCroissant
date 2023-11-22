@@ -49,21 +49,43 @@ io.on("connection", (socket) => {
   socket.on("startGame", () => {
     // console.log("receive");
     const room = getSocketRoom(socket);
-    const userInRoom = societies
-      .find((company) => company.name === room)!
-      .users.sort(sortRandomly);
+    const activeUsersInRoom =
+      findUserOfSameSocietyConnected(room).sort(sortRandomly);
 
-    // io.to(room).emit("gameStarted", userInRoom);
-    socket.emit("gameStarted", userInRoom);
+    io.to(room).emit("gameStarted", activeUsersInRoom);
   });
 
   socket.on("vote", (value, socketTurn) => {
-    if (value) {
-      console.log(value);
+    const room = getSocketRoom(socket);
+    const society = societies.find((society) => society.name === room)!;
+    const winnerSocket = value ? socket.id : socketTurn;
+    society.users.find((user) => user.socketId === winnerSocket)!.points += 1;
+    society.votedUsers += 1;
+    socket.emit("voted"); //a voir si besoin pour confirmer le vote
+    if (
+      society.votedUsers ===
+      findUserOfSameSocietyConnected(room).length - 1
+    ) {
+      society.votedUsers = 0;
+      io.to(room).emit("endTurn");
     }
+  });
+
+  socket.on("endGame", () => {
+    const room = getSocketRoom(socket);
+    io.to(room).emit("gameEnded", findUserOfSameSocietyConnected(room));
+    const society = societies.find((society) => society.name === room)!;
+    society.users.forEach((user) => {
+      user.socketId = "";
+      user.points = 0;
+    });
+  });
+
+  socket.on("disconnect", () => {
+    socket.disconnect();
   });
 });
 
-httpServer.listen(3000);
-
-//
+httpServer.listen(3000, () => {
+  console.log("listen 3000");
+});
